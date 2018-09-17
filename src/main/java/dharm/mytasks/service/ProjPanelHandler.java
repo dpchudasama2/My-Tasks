@@ -18,6 +18,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
@@ -29,7 +30,7 @@ import dharm.mytasks.uihelper.UIBuilder;
 import dharm.mytasks.util.DatabaseUtil;
 
 public class ProjPanelHandler {
-
+	
 	private Map<String, Supplier<Object>> commonVarFetcher;
 	private final CommandExecutor commandExecutor;
 
@@ -92,7 +93,7 @@ public class ProjPanelHandler {
 				JPopupMenu popup = new JPopupMenu();
 
 				JMenuItem addCompMenuItem = new JMenuItem("Add Component", 'A');
-				addCompMenuItem.addActionListener(actEvt->EventQueue.invokeLater(()->showAddComponentDialog(panel, "Add Component")));
+				addCompMenuItem.addActionListener(actEvt->EventQueue.invokeLater(()->showAddComponentDialog(proj, "Add Component")));
 				popup.add(addCompMenuItem);
 				
 				popup.show(panel, e.getX(), e.getY());
@@ -102,7 +103,7 @@ public class ProjPanelHandler {
 		return listener;
 	}
 	
-	private void showAddComponentDialog(JPanel panel, String dialogTitle){
+	private void showAddComponentDialog(Project proj, String dialogTitle){
 		JFrame mainFrame = (JFrame) commonVarFetcher.getOrDefault(CommonConstant.MAIN_FRAME, ()->null).get();
 
 		String parentQuery = "SELECT COMPONENTTYPEID, TYPENAME, COMMANDPREFIX, COMMANDSUFFIX, DESC FROM COMPONENTTYPE";
@@ -140,10 +141,24 @@ public class ProjPanelHandler {
 		.addPair(0, "Command", txtCommand, UIBuilder.groupPane(FlowLayout.LEADING, lblCmdPrefix, lblCmd, lblCmdSuffix))
 		.addPair(0, "Description", txtDesc)
 		.showDialog(mainFrame, dialogTitle, dialog->{
+//			Project proj = (Project) commonVarFetcher.get(CommonConstant.CUR_PROJ).get();
+			@SuppressWarnings("unchecked")
 			Map<String, Object> recordMap = ((Record<Map<String, Object>>)combo.getSelectedItem()).getValue();
-			//insert logic
-//			"INSERT INTO COMPONENT (LABEL, COMMAND, DESC, DISPORDER, COMPONENTTYPEID, PROJECTID) VALUES('Notify Test 1', 'Test 1', 'Notification test', 1, 4, 4)",
-
+			
+			Number compTypeID = (Number) recordMap.get("COMPONENTTYPEID");
+			String label = txtLabel.getText();
+			String cmd = txtCommand.getText();
+			String desc = txtDesc.getText();
+			
+			int projID = proj.getProjectId();
+			
+			DatabaseUtil.execute(conn->{
+				Number nextDispOrder = (Number) DatabaseUtil.get(conn, "SELECT MAX(DISPORDER)+1 FROM COMPONENT WHERE PROJECTID = ?", new Object[]{projID}, 0);
+				String query = "INSERT INTO COMPONENT (LABEL, COMMAND, DESC, DISPORDER, COMPONENTTYPEID, PROJECTID) VALUES(?, ?, ?, ?, ?, ?)";
+				DatabaseUtil.query(conn, query, label, cmd, desc, nextDispOrder, compTypeID, projID);
+				return null;
+			});
+			JOptionPane.showMessageDialog(dialog, "Changes will be update on restart.");
 			return true;
 		});
 	}
