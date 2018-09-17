@@ -253,7 +253,7 @@ public class UIBuilder {
 		panel.setBorder(new EmptyBorder(20, 30, 20, 30));
 		dialog.setContentPane(panel);
 
-		dialog.setResizable(false);
+//		dialog.setResizable(false);
 		dialog.pack();
 		dialog.setLocationRelativeTo(callerFrame);
 
