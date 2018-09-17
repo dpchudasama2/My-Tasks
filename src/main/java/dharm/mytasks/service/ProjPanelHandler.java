@@ -153,7 +153,7 @@ public class ProjPanelHandler {
 			int projID = proj.getProjectId();
 			
 			DatabaseUtil.execute(conn->{
-				Number nextDispOrder = (Number) DatabaseUtil.get(conn, "SELECT MAX(DISPORDER)+1 FROM COMPONENT WHERE PROJECTID = ?", new Object[]{projID}, 0);
+				Number nextDispOrder = (Number) DatabaseUtil.get(conn, "SELECT IFNULL(MAX(DISPORDER),0)+1 FROM COMPONENT WHERE PROJECTID = ?", new Object[]{projID}, 0);
 				String query = "INSERT INTO COMPONENT (LABEL, COMMAND, DESC, DISPORDER, COMPONENTTYPEID, PROJECTID) VALUES(?, ?, ?, ?, ?, ?)";
 				DatabaseUtil.query(conn, query, label, cmd, desc, nextDispOrder, compTypeID, projID);
 				return null;
