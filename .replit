@@ -1,2 +1,2 @@
 language = "java10"
-run = ""
+run = "mvn exec:java -Dexec.mainClass=dharm.mytasks.Main"
