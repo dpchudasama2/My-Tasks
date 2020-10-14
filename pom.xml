@@ -20,7 +20,7 @@
 		<h2database.version>1.4.197</h2database.version>
 		<log4j.version>1.2.9</log4j.version>
 		<json.version>1.1.1</json.version>
-		<junit.version>4.12</junit.version>
+		<junit.version>4.13.1</junit.version>
 		<!-- Maven Plugins Version -->
 		<eclipse.version>2.9</eclipse.version>
 		<compiler.version>3.2</compiler.version>
