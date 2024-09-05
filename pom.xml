@@ -17,7 +17,7 @@
 		<java.version>1.8</java.version>
 		<mainClass>dharm.mytasks.Main</mainClass>
 		<!-- Libraries Version -->
-		<h2database.version>2.1.210</h2database.version>
+		<h2database.version>2.2.220</h2database.version>
 		<log4j.version>1.2.9</log4j.version>
 		<json.version>1.1.1</json.version>
 		<junit.version>4.13.1</junit.version>
